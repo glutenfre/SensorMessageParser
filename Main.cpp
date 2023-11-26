@@ -4,11 +4,7 @@
 
 int GetBites(int num, int length) {
 	// This function peeks certain amount bites from byte, but im not using it, since all the data comes in undivided bytes
-	int m = 1;
-	for (int i = 0; i < length; i++) {
-		m *= 2;
-	}
-	m--;
+	int m = std::pow(2, length) - 1;
 	return (num & m);
 }
 
@@ -275,21 +271,21 @@ bool ParseModuleData(const std::string char_buffer) {
 
 				some_info = GetByte(&s_stream);
 				reply += "Incidents: ";
-				if ((some_info & 1) == 1)
+				if (some_info & 1)
 					reply += "unblocked parking; ";
-				if ((some_info & 2) == 2)
+				if (some_info & 2)
 					reply += "congested parking; ";
-				if ((some_info & 4) == 4)
+				if (some_info & 4)
 					reply += "vehicle overspeed; ";
-				if ((some_info & 8) == 8)
+				if (some_info & 8)
 					reply += "harbour parking; ";
-				if ((some_info & 16) == 16)
+				if (some_info & 16)
 					reply += "slow moving vehicles; ";
-				if ((some_info & 32) == 32)
+				if (some_info & 32)
 					reply += "pedestrian; ";
-				if ((some_info & 64) == 64)
+				if (some_info & 64)
 					reply += "retrograde vehicle; ";
-				if ((some_info & 128) == 128)
+				if (some_info & 128)
 					reply += "change of direction;";
 				if (reply[reply.size() - 2] == ':')
 					reply += "no event occurred.";
@@ -329,13 +325,13 @@ bool ParseModuleData(const std::string char_buffer) {
 bool ParseLaneData(const std::string char_buffer) {
 	std::string reply;
 	std::istringstream s_stream(char_buffer);
-	int targets_num;
-	if (SkipModuleData(&s_stream, &targets_num)) {
+	int lanes_num;
+	if (SkipModuleData(&s_stream, &lanes_num)) {
 		if ((GetByteString(&s_stream) == "44") && (GetByteString(&s_stream) == "4C")) {
 			reply += "Lane Data Module\n";
 			int module_data_length = GetTwoBytes(&s_stream);
 			reply += "Module data length: " + std::to_string(module_data_length) + " byte(s)\n";
-			for (int i = 0; i < targets_num; i++) {
+			for (int i = 0; i < lanes_num; i++) {
 				int some_info = GetByte(&s_stream);
 				reply += "Lane " + std::to_string(i+1) + ": " + std::to_string(some_info) + "\n";
 
@@ -344,15 +340,15 @@ bool ParseLaneData(const std::string char_buffer) {
 				
 				some_info = GetTwoBytes(&s_stream);
 				reply += "Congestion: ";
-				if ((some_info & 1) == 1)
+				if (some_info & 1)
 					reply += "no congestion; ";
-				if ((some_info & 2) == 2)
+				if (some_info & 2)
 					reply += "light congestion; ";
-				if ((some_info & 4) == 4)
+				if (some_info & 4)
 					reply += "moderate congestion; ";
-				if ((some_info & 8) == 8)
+				if (some_info & 8)
 					reply += "heavy congestion; ";
-				if ((some_info & 16) == 16)
+				if (some_info & 16)
 					reply += "Exceeding the congestion length; ";
 				if (reply[reply.size() - 2] == ':')
 					reply += "no event occurred.";
